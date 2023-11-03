@@ -31,6 +31,7 @@ void printMenu(int nTime)
     printf("5 - Exit\n");
     printf("6 - Change Bus Configuration\n");
     printf("7 - Go to Next Day\n");
+    printf("8 - Add Buses\n");
     printf("Select your choice: ");
 }
 
@@ -49,11 +50,42 @@ int getBusNumber(int nCount)
     return nChoice;
 }
 
+void clearConsole()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+char *getBusState(int nTime, int nSchedule)
+{
+    int nTimeDifference = nSchedule - nTime;
+
+    if (nTimeDifference < 0)
+    {
+        return "DEPARTED";
+    }
+    else if (nTimeDifference == 0)
+    {
+        return "DEPARTING";
+    }
+    else if (nTimeDifference <= 100)
+    {
+        return "NEXT BUS";
+    }
+    else
+    {
+        return "SCHEDULED";
+    }
+}
+
 int main()
 {
     // all values initialized here are specified via MP specs
     int **pBuses = NULL, // Explicit null necessary to prevent issues
-        *pBusSeats = (int *)(malloc(14 * sizeof(int))),
+        *pBusSeats = malloc(14 * sizeof(int)),
         nBusCount = 14,
         nChoice,
         nCurrentTime = 400,
@@ -94,7 +126,7 @@ int main()
 
                 *pSeat = nId;
                 printf("Successfully reserved seat %d of bus %d for ID %d.\n",
-                       *pSeat, nBusNumber, nId);
+                       nSeatNumber, nBusNumber, nId);
                 nTicketCount++;
             }
             else
@@ -135,10 +167,57 @@ int main()
         }
         case 3: // Display Schedule
         {
+
+            printf("/-----------------------------\\\n");
+            printf("|  B U S   T I M E T A B L E  |\n");
+            printf("|  CURRENT TIME:        %04d  |\n", nCurrentTime);
+            printf("|-----------------------------|\n");
+            printf("| M A N I L A             T O |\n");
+            printf("| L A G U N A                 |\n");
+            printf("| DEPT. TIME          STATUS  |\n");
+            printf("|                             |\n");
+
+            for (int i = 0; i < 8; i++)
+            {
+                int nTime = 400 + (i * 200), n12HourTime;
+                char c12HourPrefix = 'a';
+
+                if (nTime >= 1200)
+                    c12HourPrefix = 'p';
+
+                if (nTime != 1200)
+                    n12HourTime = nTime % 1200;
+
+                printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime, c12HourPrefix, getBusState(nCurrentTime, nTime));
+            }
+
+            printf("|-----------------------------|\n");
+            printf("| L A G U N A             T O |\n");
+            printf("| M A N I L A                 |\n");
+            printf("| DEPT. TIME          STATUS  |\n");
+            printf("|                             |\n");
+
+            for (int i = 0; i < 8; i++)
+            {
+                int nTime = 500 + (i * 200), n12HourTime;
+                char c12HourPrefix = 'a';
+
+                if (nTime >= 1200)
+                    c12HourPrefix = 'p';
+
+                if (nTime != 1200)
+                    n12HourTime = nTime % 1200;
+
+                printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime, c12HourPrefix, getBusState(nCurrentTime, nTime));
+            }
+
+            printf("\\-----------------------------/\n");
             break;
         }
         case 4: // Update Time
         {
+            printf("Input new time: ");
+            scanf("%d", &nCurrentTime);
             break;
         }
         case 5: // Close
