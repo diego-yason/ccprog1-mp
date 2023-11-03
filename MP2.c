@@ -34,6 +34,9 @@ void printMenu(int nTime)
     printf("Select your choice: ");
 }
 
+/**
+ *
+ */
 int getBusNumber(int nCount)
 {
     int nChoice;
@@ -69,12 +72,65 @@ int main()
         {
         case 1: // Book a ticket
         {
-            int nBusNumber = getBusNumber(nBusCount);
+            // TODO: allow different configs
+            int nBusNumber = getBusNumber(nBusCount),
+                *pBus = *iterateBusPointer(nBusNumber, pBuses),
+                *pSeat, nSeatNumber;
+
+            do
+            {
+                printf("Select seat number (1 - 14): ");
+                scanf("%d", &nSeatNumber);
+            } while (nSeatNumber < 1 || nSeatNumber > 14);
+
+            pSeat = iterateSeatPointer(nSeatNumber, pBus);
+
+            // Verify if seat is open
+            if (*pSeat == 0)
+            {
+                int nId;
+                printf("Please input the ID number of the person reserving: ");
+                scanf("%d", &nId);
+
+                *pSeat = nId;
+                printf("Successfully reserved seat %d of bus %d for ID %d.\n",
+                       *pSeat, nBusNumber, nId);
+                nTicketCount++;
+            }
+            else
+            {
+                printf("Sorry this seat is occupied by ID %d!\n", *pSeat);
+            }
 
             break;
         }
         case 2: // Cancel a booking
         {
+            int nBusNumber = getBusNumber(nBusCount), nSeatNumber;
+            // TODO: add printing of seats occupied or whatever
+
+            do
+            {
+                printf("What seat will you be cancelling? ");
+                scanf("%d", &nSeatNumber);
+            } while (nSeatNumber < 0 || nSeatNumber > 14);
+
+            int *pSeat = iterateSeatPointer(nSeatNumber,
+                                            *iterateBusPointer(nBusNumber, pBuses));
+
+            if (*pSeat == 0)
+            {
+                printf("You can't cancel an empty seat!");
+            }
+            else
+            {
+                *pSeat = 0;
+                nTicketCancellations++;
+
+                printf("Canceled ID %d's reservation for seat %d.", *pSeat, nSeatNumber);
+            }
+
+            printf("\n");
             break;
         }
         case 3: // Display Schedule
@@ -96,6 +152,11 @@ int main()
         }
         case 7: // Next day (why not)
         {
+            break;
+        }
+        case 8: // add more buses
+        {
+            initializeBuses(16, &pBuses, &pBusSeats, 1);
             break;
         }
         default:
