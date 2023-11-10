@@ -1,57 +1,54 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 /**
- * Returns the appropriate bus in the buses interator.
- * Precondition: pIterator can be iterated via pointer arithmetic.
- * @param nIdNumber ID/Slot to obtain (1-indexed)
- * @param pIterator Pointer to the bus
- * @return Desired bus
- */
-int **iterateBusPointer(int nIdNumber, int **pIterator)
-{
-    return (pIterator + (nIdNumber - 1));
-}
-
-/**
- * Returns the appropriate seat in the bus interator.
- * Precondition: pIterator can be iterated via pointer arithmetic.
- * @param nIdNumber ID/Slot to obtain (1-indexed)
- * @param pIterator Pointer to the bus
- * @return Desired seat
- */
-int *iterateSeatPointer(int nIdNumber, int *pIterator)
-{
-    return (pIterator + (nIdNumber - 1));
-}
-
-/**
- * Allocate memory for the buses. Each bus is assumed to be departing
- * 30 minutes after the previous bus at the current bus's stop.
- * Precondition: When bTransferData is true: # of existing buses <= nBusCount.
+ * @brief Allocates memory for the buses. Each bus is assumed to be departing
+ *        30 minutes after the previous bus at the current bus's stop.
  * @param nBusCount Number of buses in the new schedule.
- * @param pCurrentBuses Pointer to the existing bus reference.
- * @param pBusSeats Pointer to the existing seat reference.
+ * @param ppCurrentBusesAnchor Pointer to the existing ANCHOR bus cursor.
+ * @param ppBusSeatReferenceAnchor Pointer to the bus seat reference.
  * @param bTransferData Flag to indicate whether to transfer existing data.
  * @warning If transferring data, nBusCount cannot be lesser than the existing bus count.
  */
-void initializeBuses(int nBusCount, int ***pCurrentBuses, int **pBusSeats, int bTransferData)
+void initializeBuses(int nBusCount, int ***ppCurrentBusesAnchor,
+                     int **ppBusSeatReferenceAnchor, int bTransferData)
 {
-    int i, j, nPreviousSetSize,
-        **pNewBusMain = malloc(nBusCount * sizeof(int *)),
-        *pSeatReference = *pBusSeats,
-        **pBusPointer;
+    int
+        /**
+         * @brief Anchor pointer to the first new bus (seat 1 of bus 1).
+         * @details Data stored: Pointer to the first seat of each bus.
+         */
+        **pNewBusMainAnchor = calloc(nBusCount, sizeof(int *)),
+        /**
+         * @brief Anchor pointer to the seat reference (starting at bus 1).
+         * @details Data stored: Pointer to an integer, defines the seat
+         *          count for the respective bus.
+         */
+        *pSeatReferenceAnchor = calloc(nBusCount, sizeof(int)),
+        /**
+         * @brief Cursor to the seat reference (starting at bus 1).
+         * @note Separated from pSeatReferenceAnchor to ensure anchor status.
+         */
+            *pSeatReferenceCursor = pSeatReferenceAnchor,
+        /**
+         * @brief Pointer to the new current bus
+         * @note Separated from pNewBusMainAnchor to ensure anchor status.
+         */
+                **pBusCursor = pNewBusMainAnchor,
+        i;
+    // nPreviousSetSize,
 
     if (bTransferData == 1)
     {
-        // nPreviousSetSize = sizeof(*pCurrentBuses) * 14 / sizeof(int **); // TODO: replace 14 with bus count variable
+        // nPreviousSetSize = sizeof(*ppCurrentBusesAnchor) * 14 / sizeof(int **); // TODO: replace 14 with bus count variable
 
         // // allocate memory first
-        // pBusPointer = pNewBusMain;
+        // pBusCursor = pNewBusMain;
         // for (i = 0; i < nPreviousSetSize; i++)
         // {
         //     int nNumberOfSeats = *(pSeatReference + i);
-        //     *pBusPointer = calloc(nNumberOfSeats, sizeof(int));
-        //     pBusPointer++;
+        //     *pBusCursor = calloc(nNumberOfSeats, sizeof(int));
+        //     pBusCursor++;
         // }
 
         // // set the rest to default size
@@ -59,17 +56,17 @@ void initializeBuses(int nBusCount, int ***pCurrentBuses, int **pBusSeats, int b
         // {
         //     for (i = 0; i < nBusCount - nPreviousSetSize; i++)
         //     {
-        //         *pBusPointer = calloc(14, sizeof(int));
-        //         pBusPointer++;
+        //         *pBusCursor = calloc(14, sizeof(int));
+        //         pBusCursor++;
         //     }
         // }
 
         // // Start deleting the old set
-        // pBusPointer = pNewBusMain;
+        // pBusCursor = pNewBusMain;
         // for (i = 0; i < nPreviousSetSize; i++)
         // {
-        //     int *pOldBus = *(*pCurrentBuses + i),
-        //         *pNewBus = *(pBusPointer + i);
+        //     int *pOldBus = *(*ppCurrentBusesAnchor + i),
+        //         *pNewBus = *(pBusCursor + i);
         //     for (j = 0; j < *(pSeatReference + i); j++)
         //     {
         //         // Variables are required due to
@@ -85,21 +82,40 @@ void initializeBuses(int nBusCount, int ***pCurrentBuses, int **pBusSeats, int b
         //     }
         //     free(pOldBus);
         // }
-        // free(*pCurrentBuses);
+        // free(*ppCurrentBusesAnchor);
     }
     else
     {
-        int *pSeatRef = *pBusSeats;
-        pBusPointer = pNewBusMain;
+        // Make blank dataset
         for (i = 0; i < nBusCount; i++)
         {
-            *pBusPointer = calloc(14, sizeof(int));
-            pBusPointer++;
+            *pBusCursor = calloc(14, sizeof(int));
 
-            // seat count
-            *pSeatRef = 14;
-            pSeatRef++;
+            *pSeatReferenceCursor = 14;
+            pSeatReferenceCursor++;
+            pBusCursor++;
         }
     }
-    *pCurrentBuses = pNewBusMain;
+
+    // TODO: set free() for old buses and cursors
+
+    *ppBusSeatReferenceAnchor = pSeatReferenceCursor;
+    *ppCurrentBusesAnchor = pNewBusMainAnchor;
+}
+
+/**
+ * @brief Requests for a bus number
+ * @param nCount Number of buses in the schedule
+ * @return Bus number
+ */
+int getBusNumber(int nCount)
+{
+    int nChoice;
+    do
+    {
+        printf("Pick a bus number (1 - %d): ", nCount);
+        scanf("%d", &nChoice);
+    } while (nChoice < 1 || nChoice > nCount);
+
+    return nChoice;
 }

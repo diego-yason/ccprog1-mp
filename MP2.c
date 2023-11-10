@@ -19,95 +19,57 @@ DIEGO DAVID PEREZ YASON, DLSU ID# 12308978
 #include <stdio.h>
 #include <stdlib.h>
 #include "busManagement.c"
-
-void printMenu(int nTime)
-{
-    printf("Welcome, Teller!\n");
-    printf("It is %d:%02d\n", nTime / 100, nTime % 100);
-    printf("1 - Book a Ticket\n");
-    printf("2 - Cancel a Ticket\n");
-    printf("3 - Display Timetable\n");
-    printf("4 - Update Current Time\n");
-    printf("5 - Exit\n");
-    printf("6 - Change Bus Configuration\n");
-    printf("7 - Go to Next Day\n");
-    printf("8 - Add Buses\n");
-    printf("Select your choice: ");
-}
-
-/**
- *
- */
-int getBusNumber(int nCount)
-{
-    int nChoice;
-    do
-    {
-        printf("Pick a bus number (1 - %d): ", nCount);
-        scanf("%d", &nChoice);
-    } while (nChoice < 1 || nChoice > nCount);
-
-    return nChoice;
-}
-
-void clearConsole()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
-
-char *getBusState(int nTime, int nSchedule)
-{
-    int nTimeDifference = nSchedule - nTime;
-
-    if (nTimeDifference < 0)
-    {
-        return "DEPARTED";
-    }
-    else if (nTimeDifference == 0)
-    {
-        return "DEPARTING";
-    }
-    else if (nTimeDifference <= 100)
-    {
-        return "NEXT BUS";
-    }
-    else
-    {
-        return "SCHEDULED";
-    }
-}
+#include "timetable.c"
+#include "consoleManagement.c"
+#include "iterators.c"
 
 int main()
 {
     // all values initialized here are specified via MP specs
-    int **pBuses = NULL, // Explicit null necessary to prevent issues
-        *pBusSeats = malloc(14 * sizeof(int)),
+    int
+        /**
+         * @brief Anchor pointer of buses
+         * @details Data stored: Pointer to the first seat of the 1st bus.
+         * @note Explicit null necessary to prevent issues
+         */
+        **pBusesAnchor = NULL,
+        /**
+         * @brief Anchor pointer of bus layout
+         * @details Data stored: Pointer to the seat count of the 1st bus.
+         * @note Explicit null necessary to prevent issues
+         */
+        *pBusLayoutAnchor = NULL,
+        /**
+         * @brief Cursor to the bus layout
+         * @note Separated from pBusesAnchor to ensure anchor status
+         */
+            **pBusCursor = NULL,
+        /**
+         * @brief Number of buses in the system
+         */
         nBusCount = 14,
         nChoice,
         nCurrentTime = 400,
         nTicketCount = 0,
-        nTicketCancellations = 0,
-        nDay = 1;
+        nTicketCancellations = 0;
 
-    initializeBuses(14, &pBuses, &pBusSeats, 0);
+    initializeBuses(14, &pBusesAnchor, &pBusLayoutAnchor, 0);
 
     do
     {
         printMenu(nCurrentTime);
         scanf("%d", &nChoice);
 
+        // nCurrent;
+
         switch (nChoice)
         {
         case 1: // Book a ticket
         {
-            // TODO: allow different configs
             int nBusNumber = getBusNumber(nBusCount),
-                *pBus = *iterateBusPointer(nBusNumber, pBuses),
                 *pSeat, nSeatNumber;
+
+            pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
 
             do
             {
@@ -115,18 +77,18 @@ int main()
                 scanf("%d", &nSeatNumber);
             } while (nSeatNumber < 1 || nSeatNumber > 14);
 
-            pSeat = iterateSeatPointer(nSeatNumber, pBus);
+            pSeat = iterateInt1Pointer(nSeatNumber, *pBusCursor);
 
             // Verify if seat is open
             if (*pSeat == 0)
             {
-                int nId;
+                int nIdNumber;
                 printf("Please input the ID number of the person reserving: ");
-                scanf("%d", &nId);
+                scanf("%d", &nIdNumber);
 
-                *pSeat = nId;
+                *pSeat = nIdNumber;
                 printf("Successfully reserved seat %d of bus %d for ID %d.\n",
-                       nSeatNumber, nBusNumber, nId);
+                       nSeatNumber, nBusNumber, nIdNumber);
                 nTicketCount++;
             }
             else
@@ -147,8 +109,8 @@ int main()
                 scanf("%d", &nSeatNumber);
             } while (nSeatNumber < 0 || nSeatNumber > 14);
 
-            int *pSeat = iterateSeatPointer(nSeatNumber,
-                                            *iterateBusPointer(nBusNumber, pBuses));
+            int *pSeat = iterateInt1Pointer(nSeatNumber,
+                                            *iterateInt2Pointer(nBusNumber, pBusesAnchor));
 
             if (*pSeat == 0)
             {
@@ -188,7 +150,8 @@ int main()
                 if (nTime != 1200)
                     n12HourTime = nTime % 1200;
 
-                printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime, c12HourPrefix, getBusState(nCurrentTime, nTime));
+                printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime,
+                       c12HourPrefix, getBusState(nCurrentTime, nTime));
             }
 
             printf("|-----------------------------|\n");
@@ -208,7 +171,8 @@ int main()
                 if (nTime != 1200)
                     n12HourTime = nTime % 1200;
 
-                printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime, c12HourPrefix, getBusState(nCurrentTime, nTime));
+                printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime,
+                       c12HourPrefix, getBusState(nCurrentTime, nTime));
             }
 
             printf("\\-----------------------------/\n");
@@ -229,13 +193,45 @@ int main()
         {
             break;
         }
-        case 7: // Next day (why not)
+        // --- DEVELOPER OPTIONS ---
+        case 7: // Print all buses
         {
+            int i, j;
+
+            int *pSeat = iterateInt1Pointer(0, *iterateInt2Pointer(0, pBusesAnchor));
+
+            for (i = 0; i < nBusCount; i++)
+            {
+                printf("Bus %d: ", i + 1);
+                for (j = 0; j < 14; j++)
+                {
+                    printf("%d ", *pSeat);
+
+                    pSeat++;
+                }
+                printf("\n");
+            }
+
             break;
         }
-        case 8: // add more buses
+        case 8: // Clear all seats
         {
-            initializeBuses(16, &pBuses, &pBusSeats, 1);
+            int i, j;
+
+            int *pSeat = iterateInt1Pointer(0, *iterateInt2Pointer(0, pBusesAnchor));
+
+            for (i = 0; i < nBusCount; i++)
+            {
+                printf("Bus %d: ", i + 1);
+                for (j = 0; j < 14; j++)
+                {
+                    *pSeat = 0;
+
+                    pSeat++;
+                }
+                printf("\n");
+            }
+
             break;
         }
         default:
@@ -244,6 +240,8 @@ int main()
             break;
         }
         }
+
+        // TODO: add confirmation before continuing
     } while (nChoice != -1);
 
     return 0;
