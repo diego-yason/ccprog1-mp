@@ -109,8 +109,8 @@ int main()
                 scanf("%d", &nSeatNumber);
             } while (nSeatNumber < 0 || nSeatNumber > 14);
 
-            int *pSeat = iterateInt1Pointer(nSeatNumber,
-                                            *iterateInt2Pointer(nBusNumber, pBusesAnchor));
+            pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
+            int *pSeat = iterateInt1Pointer(nSeatNumber, *pBusCursor);
 
             if (*pSeat == 0)
             {
@@ -141,14 +141,9 @@ int main()
 
             for (int i = 0; i < 8; i++)
             {
-                int nTime = 400 + (i * 200), n12HourTime;
-                char c12HourPrefix = 'a';
-
-                if (nTime >= 1200)
-                    c12HourPrefix = 'p';
-
-                if (nTime != 1200)
-                    n12HourTime = nTime % 1200;
+                int nTime = 400 + (i * 200),
+                    n12HourTime = convert24To12(nTime);
+                char c12HourPrefix = getTimePrefix(nTime);
 
                 printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime,
                        c12HourPrefix, getBusState(nCurrentTime, nTime));
@@ -162,14 +157,9 @@ int main()
 
             for (int i = 0; i < 8; i++)
             {
-                int nTime = 500 + (i * 200), n12HourTime;
-                char c12HourPrefix = 'a';
-
-                if (nTime >= 1200)
-                    c12HourPrefix = 'p';
-
-                if (nTime != 1200)
-                    n12HourTime = nTime % 1200;
+                int nTime = 500 + (i * 200),
+                    n12HourTime = convert24To12(nTime);
+                char c12HourPrefix = getTimePrefix(nTime);
 
                 printf("| %04d  %04d%cm      %9s |\n", nTime, n12HourTime,
                        c12HourPrefix, getBusState(nCurrentTime, nTime));

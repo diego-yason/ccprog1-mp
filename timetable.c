@@ -19,3 +19,19 @@ char *getBusState(int nTime, int nSchedule)
         return "SCHEDULED";
     }
 }
+
+char getTimePrefix(int nTime)
+{
+    if (nTime >= 1200)
+        return 'p';
+    else
+        return 'a';
+}
+
+int convert24To12(int nTime)
+{
+    if (nTime != 1200)
+        return nTime % 1200;
+    else
+        return nTime;
+}
