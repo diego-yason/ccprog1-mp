@@ -60,8 +60,6 @@ int main()
         printMenu(nCurrentTime);
         scanf("%d", &nChoice);
 
-        // nCurrent;
-
         switch (nChoice)
         {
         case 1: // Book a ticket
@@ -106,7 +104,8 @@ int main()
             pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
 
             // TODO: allow seat changes
-            printBus(nBusNumber, 14, *pBusCursor);
+            printBus(nBusNumber, *iterateInt1Pointer(nBusNumber, pBusLayoutAnchor),
+                     *pBusCursor);
 
             do
             {

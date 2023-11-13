@@ -19,14 +19,12 @@ void initializeBuses(int nBusCount, int ***ppCurrentBusesAnchor,
          * @brief Anchor pointer to the first new bus (seat 1 of bus 1).
          * @details Data stored: Pointer to the first seat of each bus.
          */
-        // TODO: free ppCurrentBusesAnchor
         **pNewBusMainAnchor = calloc(nBusCount, sizeof(int *)),
         /**
          * @brief Anchor pointer to the seat reference (starting at bus 1).
          * @details Data stored: Pointer to an integer, defines the seat
          *          count for the respective bus.
          */
-        // TODO: free ppBusSeatReferenceAnchor
         *pSeatReferenceAnchor = calloc(nBusCount, sizeof(int)),
         /**
          * @brief Cursor to the seat reference (starting at bus 1).
@@ -62,8 +60,6 @@ void initializeBuses(int nBusCount, int ***ppCurrentBusesAnchor,
 int *replaceBus(int nBusNumber, int *pSeatAnchor,
                 int *pSeatReferenceAnchor, int nNewSeatCount)
 {
-    // TODO: free
-
     int *pNewSeatAnchor = NULL, *pNewSeatCursor = NULL, i,
         nOldSeatCount = *iterateInt1Pointer(nBusNumber, pSeatReferenceAnchor),
         *pOldSeatCursor = pSeatAnchor;
@@ -77,6 +73,8 @@ int *replaceBus(int nBusNumber, int *pSeatAnchor,
     }
 
     *iterateInt1Pointer(nBusNumber, pSeatReferenceAnchor) = nNewSeatCount;
+
+    free(pSeatAnchor);
     return pNewSeatAnchor;
 }
 

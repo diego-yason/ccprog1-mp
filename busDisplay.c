@@ -23,7 +23,6 @@ void bookingPrintWithVarChanges(int **pTakenSeatsCursor, int *pSeatAnchor, int *
 
 void printBus(int nBusNumber, int nCapacity, int *pSeatAnchor)
 {
-    // TODO: free
     int *pTakenSeatsAnchor = calloc(nCapacity, sizeof(int)),
         *pTakenSeatsCursor = pTakenSeatsAnchor,
         nTakenSeatsCounter = 0,
@@ -45,19 +44,30 @@ void printBus(int nBusNumber, int nCapacity, int *pSeatAnchor)
     pTakenSeatsCursor = pTakenSeatsAnchor;
 
     printf("  BUS #%02d LAYOUT\n", nBusNumber);
-    printf("  ================\n");
-    printf(" / DR  |         |\\\n");
+    printf("  ================     BOOKINGS\n");
+    printf(" / DR  |         |\\   INSIDE BUS:\n");
 
     for (i = 1; i <= nCapacity; i++)
     {
-        printf("|  %02d  |   |  ", i);
+        char cTakenIndicator;
+
+        if (*iterateInt1Pointer(i, pSeatAnchor) != 0)
+            cTakenIndicator = 'X';
+        else
+            cTakenIndicator = ' ';
+
+        printf("| %c%02d%c |   | ", cTakenIndicator, i, cTakenIndicator);
         if (nCapacity - i >= 1)
         {
             i++;
-            printf("%02d  |", i);
+            if (*iterateInt1Pointer(i, pSeatAnchor) != 0)
+                cTakenIndicator = 'X';
+            else
+                cTakenIndicator = ' ';
+            printf("%c%02d%c |", cTakenIndicator, i, cTakenIndicator);
         }
         else
-            printf("XX  |");
+            printf(" XX  |");
 
         if (nTakenSeatsCounter > 0)
         {
@@ -102,4 +112,6 @@ void printBus(int nBusNumber, int nCapacity, int *pSeatAnchor)
         printABooking(*pTakenSeatsCursor,
                       *iterateInt1Pointer(*pTakenSeatsCursor, pSeatAnchor));
     }
+
+    free(pTakenSeatsAnchor);
 }
