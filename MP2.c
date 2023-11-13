@@ -15,13 +15,13 @@ DIEGO DAVID PEREZ YASON, DLSU ID# 12308978
     Last modified:
     Version:
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "busManagement.c"
 #include "timetable.c"
 #include "consoleManagement.c"
 #include "iterators.c"
+#include "busDisplay.c"
 
 int main()
 {
@@ -67,7 +67,7 @@ int main()
         case 1: // Book a ticket
         {
             int nBusNumber = getBusNumber(nBusCount),
-                *pSeat, nSeatNumber;
+                *pSeatCursor, nSeatNumber;
 
             pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
 
@@ -77,23 +77,23 @@ int main()
                 scanf("%d", &nSeatNumber);
             } while (nSeatNumber < 1 || nSeatNumber > 14);
 
-            pSeat = iterateInt1Pointer(nSeatNumber, *pBusCursor);
+            pSeatCursor = iterateInt1Pointer(nSeatNumber, *pBusCursor);
 
             // Verify if seat is open
-            if (*pSeat == 0)
+            if (*pSeatCursor == 0)
             {
                 int nIdNumber;
                 printf("Please input the ID number of the person reserving: ");
                 scanf("%d", &nIdNumber);
 
-                *pSeat = nIdNumber;
+                *pSeatCursor = nIdNumber;
                 printf("Successfully reserved seat %d of bus %d for ID %d.\n",
                        nSeatNumber, nBusNumber, nIdNumber);
                 nTicketCount++;
             }
             else
             {
-                printf("Sorry this seat is occupied by ID %d!\n", *pSeat);
+                printf("Sorry this seat is occupied by ID %d!\n", *pSeatCursor);
             }
 
             break;
@@ -103,25 +103,28 @@ int main()
             int nBusNumber = getBusNumber(nBusCount), nSeatNumber;
             // TODO: add printing of seats occupied or whatever
 
+            pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
+
+            // TODO: allow seat changes
+            printBus(nBusNumber, 14, *pBusCursor);
+
             do
             {
                 printf("What seat will you be cancelling? ");
                 scanf("%d", &nSeatNumber);
             } while (nSeatNumber < 0 || nSeatNumber > 14);
 
-            pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
-            int *pSeat = iterateInt1Pointer(nSeatNumber, *pBusCursor);
+            int *pSeatCursor = iterateInt1Pointer(nSeatNumber, *pBusCursor);
 
-            if (*pSeat == 0)
+            if (*pSeatCursor == 0)
             {
                 printf("You can't cancel an empty seat!");
             }
             else
             {
-                *pSeat = 0;
+                printf("Canceled ID %d's reservation for seat %d.", *pSeatCursor, nSeatNumber);
                 nTicketCancellations++;
-
-                printf("Canceled ID %d's reservation for seat %d.", *pSeat, nSeatNumber);
+                *pSeatCursor = 0;
             }
 
             printf("\n");
@@ -170,13 +173,40 @@ int main()
         }
         case 4: // Update Time
         {
+            int nProposedTime;
             printf("Input new time: ");
-            scanf("%d", &nCurrentTime);
+            scanf("%d", &nProposedTime);
+
+            if (nProposedTime > nCurrentTime)
+            {
+                printf("Time updated.\n");
+                nCurrentTime = nProposedTime;
+            }
+            else if (nProposedTime == nCurrentTime)
+                printf("It is already %04d!\n", nCurrentTime);
+            else
+                printf("Cannot reverse time! Please enter a future time.\n");
             break;
         }
         case 5: // Close
         {
-            nChoice = -1;
+            char cConfirm;
+            printf("Please confirm your exit by typing \"y\".\nNOTE: ALL DATA WILL BE DELETED UPON EXIT. (y) ");
+            fflush(stdin);
+            scanf("%c", &cConfirm);
+
+            if (cConfirm == 'y')
+            {
+                nChoice = -1;
+
+                printf("Thank you for using this system!\n\nS T A T I S T I C S\n");
+                printf("Tickets issued     : %d\n", nTicketCount);
+                printf("Tickets canceled   : %d\n", nTicketCancellations);
+                printf("Net Tickets Issued : %d\n", nTicketCount - nTicketCancellations);
+            }
+            else
+                printf("Returning to main menu.");
+
             break;
         }
         case 6: // Change bus seats
@@ -188,16 +218,17 @@ int main()
         {
             int i, j;
 
-            int *pSeat = iterateInt1Pointer(0, *iterateInt2Pointer(0, pBusesAnchor));
+            int *pSeatCursor;
 
             for (i = 0; i < nBusCount; i++)
             {
+                pSeatCursor = iterateInt1Pointer(1, *iterateInt2Pointer(i + 1, pBusesAnchor));
                 printf("Bus %d: ", i + 1);
                 for (j = 0; j < 14; j++)
                 {
-                    printf("%d ", *pSeat);
+                    printf("%d ", *pSeatCursor);
 
-                    pSeat++;
+                    pSeatCursor++;
                 }
                 printf("\n");
             }
@@ -230,7 +261,11 @@ int main()
             break;
         }
         }
+        printf("Press any key to continue. ");
+        fflush(stdin);
+        getchar();
 
+        clearConsole();
         // TODO: add confirmation before continuing
     } while (nChoice != -1);
 

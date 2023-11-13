@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifndef BUS_MANAGEMENT_C
+#define BUS_MANAGEMENT_C
 /**
  * @brief Allocates memory for the buses. Each bus is assumed to be departing
  *        30 minutes after the previous bus at the current bus's stop.
@@ -119,3 +121,5 @@ int getBusNumber(int nCount)
 
     return nChoice;
 }
+
+#endif
