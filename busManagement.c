@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "iterators.c"
 
 #ifndef BUS_MANAGEMENT_C
 #define BUS_MANAGEMENT_C
@@ -9,23 +10,23 @@
  * @param nBusCount Number of buses in the new schedule.
  * @param ppCurrentBusesAnchor Pointer to the existing ANCHOR bus cursor.
  * @param ppBusSeatReferenceAnchor Pointer to the bus seat reference.
- * @param bTransferData Flag to indicate whether to transfer existing data.
- * @warning If transferring data, nBusCount cannot be lesser than the existing bus count.
  */
 void initializeBuses(int nBusCount, int ***ppCurrentBusesAnchor,
-                     int **ppBusSeatReferenceAnchor, int bTransferData)
+                     int **ppBusSeatReferenceAnchor)
 {
     int
         /**
          * @brief Anchor pointer to the first new bus (seat 1 of bus 1).
          * @details Data stored: Pointer to the first seat of each bus.
          */
+        // TODO: free ppCurrentBusesAnchor
         **pNewBusMainAnchor = calloc(nBusCount, sizeof(int *)),
         /**
          * @brief Anchor pointer to the seat reference (starting at bus 1).
          * @details Data stored: Pointer to an integer, defines the seat
          *          count for the respective bus.
          */
+        // TODO: free ppBusSeatReferenceAnchor
         *pSeatReferenceAnchor = calloc(nBusCount, sizeof(int)),
         /**
          * @brief Cursor to the seat reference (starting at bus 1).
@@ -38,71 +39,45 @@ void initializeBuses(int nBusCount, int ***ppCurrentBusesAnchor,
          */
                 **pBusCursor = pNewBusMainAnchor,
         i;
-    // nPreviousSetSize,
 
-    if (bTransferData == 1)
+    // Make blank dataset
+    for (i = 0; i < nBusCount; i++)
     {
-        // nPreviousSetSize = sizeof(*ppCurrentBusesAnchor) * 14 / sizeof(int **); // TODO: replace 14 with bus count variable
+        *pBusCursor = calloc(14, sizeof(int));
 
-        // // allocate memory first
-        // pBusCursor = pNewBusMain;
-        // for (i = 0; i < nPreviousSetSize; i++)
-        // {
-        //     int nNumberOfSeats = *(pSeatReference + i);
-        //     *pBusCursor = calloc(nNumberOfSeats, sizeof(int));
-        //     pBusCursor++;
-        // }
-
-        // // set the rest to default size
-        // if (nPreviousSetSize < nBusCount)
-        // {
-        //     for (i = 0; i < nBusCount - nPreviousSetSize; i++)
-        //     {
-        //         *pBusCursor = calloc(14, sizeof(int));
-        //         pBusCursor++;
-        //     }
-        // }
-
-        // // Start deleting the old set
-        // pBusCursor = pNewBusMain;
-        // for (i = 0; i < nPreviousSetSize; i++)
-        // {
-        //     int *pOldBus = *(*ppCurrentBusesAnchor + i),
-        //         *pNewBus = *(pBusCursor + i);
-        //     for (j = 0; j < *(pSeatReference + i); j++)
-        //     {
-        //         // Variables are required due to
-        //         // the free() at the end of loop
-        //         int *pOldSeat = pOldBus + j,
-        //             *pNewSeat = pNewBus + j;
-
-        //         // Transfer seat data
-        //         // New bus seat = Old bus seat
-        //         *pNewBus = *pOldBus;
-
-        //         free(pOldSeat);
-        //     }
-        //     free(pOldBus);
-        // }
-        // free(*ppCurrentBusesAnchor);
-    }
-    else
-    {
-        // Make blank dataset
-        for (i = 0; i < nBusCount; i++)
-        {
-            *pBusCursor = calloc(14, sizeof(int));
-
-            *pSeatReferenceCursor = 14;
-            pSeatReferenceCursor++;
-            pBusCursor++;
-        }
+        *pSeatReferenceCursor = 14;
+        pSeatReferenceCursor++;
+        pBusCursor++;
     }
 
-    // TODO: set free() for old buses and cursors
-
-    *ppBusSeatReferenceAnchor = pSeatReferenceCursor;
+    *ppBusSeatReferenceAnchor = pSeatReferenceAnchor;
     *ppCurrentBusesAnchor = pNewBusMainAnchor;
+}
+
+/**
+ * @brief
+ *
+ * @return int* Pointer to seat 1 of the new bus
+ */
+int *replaceBus(int nBusNumber, int *pSeatAnchor,
+                int *pSeatReferenceAnchor, int nNewSeatCount)
+{
+    // TODO: free
+
+    int *pNewSeatAnchor = NULL, *pNewSeatCursor = NULL, i,
+        nOldSeatCount = *iterateInt1Pointer(nBusNumber, pSeatReferenceAnchor),
+        *pOldSeatCursor = pSeatAnchor;
+    pNewSeatAnchor = pNewSeatCursor = calloc(nNewSeatCount, sizeof(int));
+
+    for (i = 0; i < nOldSeatCount; i++)
+    {
+        *pNewSeatCursor = *pOldSeatCursor;
+        pOldSeatCursor++;
+        pNewSeatCursor++;
+    }
+
+    *iterateInt1Pointer(nBusNumber, pSeatReferenceAnchor) = nNewSeatCount;
+    return pNewSeatAnchor;
 }
 
 /**
@@ -121,5 +96,4 @@ int getBusNumber(int nCount)
 
     return nChoice;
 }
-
 #endif

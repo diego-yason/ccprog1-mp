@@ -53,7 +53,7 @@ int main()
         nTicketCount = 0,
         nTicketCancellations = 0;
 
-    initializeBuses(14, &pBusesAnchor, &pBusLayoutAnchor, 0);
+    initializeBuses(14, &pBusesAnchor, &pBusLayoutAnchor);
 
     do
     {
@@ -205,54 +205,42 @@ int main()
                 printf("Net Tickets Issued : %d\n", nTicketCount - nTicketCancellations);
             }
             else
-                printf("Returning to main menu.");
+                printf("Returning to main menu.\n");
 
             break;
         }
         case 6: // Change bus seats
         {
-            break;
-        }
-        // --- DEVELOPER OPTIONS ---
-        case 7: // Print all buses
-        {
-            int i, j;
+            int nBusNumber = getBusNumber(14),
+                bIssuesFound = 0,
+                nNewSeatCount, nCurrentSeatCount, i;
 
-            int *pSeatCursor;
+            printf("How many seats will bus %d have now? ", nBusNumber);
+            scanf("%d", &nNewSeatCount);
 
-            for (i = 0; i < nBusCount; i++)
+            pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
+            nCurrentSeatCount = *iterateInt1Pointer(nBusNumber, pBusLayoutAnchor);
+
+            if (nCurrentSeatCount > nNewSeatCount)
             {
-                pSeatCursor = iterateInt1Pointer(1, *iterateInt2Pointer(i + 1, pBusesAnchor));
-                printf("Bus %d: ", i + 1);
-                for (j = 0; j < 14; j++)
+                // check if doomed seats are already occupied
+                for (i = nNewSeatCount; i <= nCurrentSeatCount; i++)
                 {
-                    printf("%d ", *pSeatCursor);
-
-                    pSeatCursor++;
+                    if (*iterateInt1Pointer(i, *pBusCursor) != 0)
+                        bIssuesFound = 1 || bIssuesFound;
                 }
-                printf("\n");
             }
 
-            break;
-        }
-        case 8: // Clear all seats
-        {
-            int i, j;
-
-            int *pSeat = iterateInt1Pointer(0, *iterateInt2Pointer(0, pBusesAnchor));
-
-            for (i = 0; i < nBusCount; i++)
+            if (bIssuesFound)
+                printf("There are bookings after seat %d! Cancel them before proceeding.\n",
+                       nNewSeatCount);
+            else
             {
-                printf("Bus %d: ", i + 1);
-                for (j = 0; j < 14; j++)
-                {
-                    *pSeat = 0;
+                *pBusCursor = replaceBus(nBusNumber, *pBusCursor,
+                                         pBusLayoutAnchor, nNewSeatCount);
 
-                    pSeat++;
-                }
-                printf("\n");
+                printf("Updated bus configuration!\n");
             }
-
             break;
         }
         default:
@@ -261,12 +249,11 @@ int main()
             break;
         }
         }
-        printf("Press any key to continue. ");
+        printf("Press enter to continue. ");
         fflush(stdin);
         getchar();
 
         clearConsole();
-        // TODO: add confirmation before continuing
     } while (nChoice != -1);
 
     return 0;

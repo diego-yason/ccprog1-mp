@@ -1,3 +1,5 @@
+#ifndef ITERATORS_C
+#define ITERATORS_C
 /**
  * @brief Returns the desired slot in an interator.
  * @param nIdNumber ID/Slot to obtain (1-indexed)
@@ -21,3 +23,4 @@ int *iterateInt1Pointer(int nIdNumber, int *pIterator)
 {
     return pIterator + (nIdNumber - 1);
 }
+#endif
