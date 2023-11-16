@@ -69,6 +69,9 @@ int main()
 
             pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
 
+            printBus(nBusNumber, *iterateInt1Pointer(nBusNumber, pBusLayoutAnchor),
+                     *pBusCursor);
+
             do
             {
                 printf("Select seat number (1 - 14): ");
