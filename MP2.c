@@ -10,11 +10,22 @@ DIEGO DAVID PEREZ YASON, DLSU ID# 12308978
 ******************************************************************/
 
 /*
-    Description
+    Description: A program that manages 14 buses, 7 of each going to Manila
+                 or Laguna. The amount of seats in each time slot is configurable.
     Programmed by: Diego David Perez Yason S24B
     Last modified:
-    Version:
+    Version: RC1
  */
+
+/**
+ * EXPLANATORY NOTE FOR NAMING SCHEME OF CERTAIN VARIABLES
+ *
+ * In this project, the way I implemented my data storage via calloc(). This requires me to
+ * keep track of the first entry (the pointer given to me when calloc() is called).
+ * These pointers are stored in a variable that has the -Anchor suffix, stating that the pointer
+ * address inside this variable is the first entry of a set made by calloc().
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "busManagement.c"
@@ -25,7 +36,6 @@ DIEGO DAVID PEREZ YASON, DLSU ID# 12308978
 
 int main()
 {
-    // all values initialized here are specified via MP specs
     int
         /**
          * @brief Anchor pointer of buses
@@ -68,9 +78,6 @@ int main()
                 *pSeatCursor, nSeatNumber;
 
             pBusCursor = iterateInt2Pointer(nBusNumber, pBusesAnchor);
-
-            printBus(nBusNumber, *iterateInt1Pointer(nBusNumber, pBusLayoutAnchor),
-                     *pBusCursor);
 
             do
             {

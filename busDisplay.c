@@ -21,6 +21,14 @@ void bookingPrintWithVarChanges(int **pTakenSeatsCursor, int *pSeatAnchor, int *
     }
 }
 
+/**
+ * @brief Prints bus information, With the bus' seat layout, with unavailable seats marked and the ID
+ *        numbers of those students with booked seats.
+ *
+ * @param nBusNumber The number of the bus
+ * @param nCapacity Capacity of the bus
+ * @param pSeatAnchor Seat 1 of the bus
+ */
 void printBus(int nBusNumber, int nCapacity, int *pSeatAnchor)
 {
     int *pTakenSeatsAnchor = calloc(nCapacity, sizeof(int)),
