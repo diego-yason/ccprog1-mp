@@ -28,9 +28,9 @@
         "-std=c99",
         "-Wall",
         "-g",
-        "${workspaceFolder}\\MP2.c",
+        "${workspaceFolder}\\main.c",
         "-o",
-        "${workspaceFolder}\\MP2.exe"
+        "${workspaceFolder}\\main.exe"
       ],
       "options": {
         "cwd": "${workspaceFolder}"
