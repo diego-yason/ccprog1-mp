@@ -1,0 +1,24 @@
+
+  ==============
+ / DR |        |    SEAT 02: 12345678
+/======   ======\   SEAT 06: 12350629
+| 0 1 |   | 0 2 |   SEAT 11: 12395216
+| 0 3 |   | 0 4 |
+| 0 5 |   | 0 6 |
+| 0 7 |   | 0 8 |
+| 0 9 |   | 1 0 |
+| 1 1 |   | 1 2 |
+| 1 3 |   | 1 4 |
+=================
+DEST.    : MANILA
+DEPT.TIME: 1400
+CAPACITY : 14
+                    
+
+notes:
+
+should have
+| 1 1 |   | 1 2 |
+on loop to accommodate different sizes
+
+add 20 spaces for extra space
