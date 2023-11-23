@@ -1,5 +1,6 @@
 /**
- * Prints the menu
+ * @brief Prints the menu
+ *
  * @param nTime Current time (24hr format)
  */
 void printMenu(int nTime)
@@ -17,7 +18,7 @@ void printMenu(int nTime)
 }
 
 /**
- * Clears the console
+ * @brief Clears the console
  */
 void clearConsole()
 {

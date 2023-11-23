@@ -80,6 +80,7 @@ int *replaceBus(int nBusNumber, int *pSeatAnchor,
 
 /**
  * @brief Requests for a bus number
+ *
  * @param nCount Number of buses in the schedule
  * @return Bus number
  */

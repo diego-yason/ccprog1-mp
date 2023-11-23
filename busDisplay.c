@@ -2,11 +2,24 @@
 #include <stdlib.h>
 #include "busManagement.c"
 
+/**
+ * @brief Prints booking information of a specific seat with the booking person's ID
+ *
+ * @param nSeatNumber Booked seat number
+ * @param nIdNumber ID Number of the booking person
+ */
 void printABooking(int nSeatNumber, int nIdNumber)
 {
     printf("SEAT %02d : %d\n", nSeatNumber, nIdNumber);
 }
 
+/**
+ * @brief
+ *
+ * @param pTakenSeatsCursor
+ * @param pSeatAnchor
+ * @param pTakenSeatsCounter
+ */
 void bookingPrintWithVarChanges(int **pTakenSeatsCursor, int *pSeatAnchor, int *pTakenSeatsCounter)
 {
     if (*pTakenSeatsCounter > 0)
