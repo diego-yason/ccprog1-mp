@@ -1,0 +1,45 @@
+              INFORMATION
+  Bus Route        : MANILA - LAGUNA
+  Seats Available  : 12
+  Departure Time   : 0400 / 04:00 am
+  Arrival Time     : 0500 / 05:00 am
+
+=====================================
+
+ BUS    LAYOUT         BOOKED  SEATS
+
+ /===========          01 - 12345678
+ | DR |      \         02 - 36812512
+ |X01X| |X02X|         03 - 12772152
+ |X03X| |X04X|         04 - 12361673
+ |X05X| | 06 |         05 - 12677124
+ |X07X| |X08X|         07 - 13671124
+ |X09X| |X10X|         08 - 12416163
+ \===========/         09 - 12516127
+                       10 - 12616893
+
+
+             INFORMATION
+ Bus Route        : %6s - %6s
+ Seats Available  : %d
+ Departure Time   : %04d / %02d:%02d %cm
+ Arrival Time     : %04d / %02d:%02d %cm
+
+====================================
+
+BUS    LAYOUT         BOOKED  SEATS
+
+/===========          %02d - %d
+| DR |      \         02 - 36812512
+|X%02dX| |X%02dX|         03 - 12772152
+|X03X| |X04X|         04 - 12361673
+|X05X| |X06X|         05 - 12677124
+|X07X| |X08X|         06 - 13671124
+|X09X| |XXXX|         07 - 12416163
+\===========/         08 - 12516127
+                      09 - 12616893
+
+notes:
+
+bus gap: 9 spaces
+full gap: 22 spaces
