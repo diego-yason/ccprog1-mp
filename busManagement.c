@@ -12,7 +12,7 @@ int *transferSeatData(int *pSeatsAnchor, int nPreviousCount, int nNewSeatCount)
         *pSeatsCursor = pSeatsAnchor,
         i;
 
-    for (i = 0; i < n4PreviousCount; i++)
+    for (i = 0; i < nPreviousCount; i++)
     {
         *pNewSeatsCursor = *pSeatsCursor;
 
@@ -33,6 +33,14 @@ void printSeatInfo(int nSeatNumber, int nIdInSeat)
         printf("|X%02dX|", nSeatNumber);
 }
 
+/**
+ * @brief
+ *
+ * @param pOccupiedSeatsList Pointer to the Occupied Seats List
+ * @param pSeatsAnchor Pointer to the Seat Anchor
+ * @param pOccupiedSeatsCount Pointer to the counter for occupied seats
+ * @param bFullPadding True when console line has no bus layout
+ */
 void printBookingInfo(int *pOccupiedSeatsList, int *pSeatsAnchor,
                       int *pOccupiedSeatsCount, int bFullPadding)
 {
@@ -41,10 +49,10 @@ void printBookingInfo(int *pOccupiedSeatsList, int *pSeatsAnchor,
     else
         repeatPrint(' ', 9);
 
-    int nSeatNumber = *pOccupiedSeatList;
+    int nSeatNumber = *pOccupiedSeatsList;
     printf("%02d - %d", nSeatNumber + 1,
            *iteratePointer(pSeatsAnchor, nSeatNumber));
-    *pOccupiedSeatsCount--;
+    (*pOccupiedSeatsCount)--;
     pOccupiedSeatsList++;
 }
 
@@ -99,17 +107,19 @@ void printBus(int *pSeatsAnchor, int nSeatCount)
     printf("/");
     repeatPrint('=', 12);
     if (nOccupiedSeatsCount > 0)
-        printBookingInfo(*pOccupiedSeatsListCursor, pSeatsAnchor,
+        printBookingInfo(pOccupiedSeatsListCursor, pSeatsAnchor,
                          &nOccupiedSeatsCount, 0);
 
     printf("| DR |");
     repeatPrint(' ', 6);
     printf("\\");
     if (nOccupiedSeatsCount > 0)
-        printBookingInfo(*pOccupiedSeatsListCursor, pSeatsAnchor,
+        printBookingInfo(pOccupiedSeatsListCursor, pSeatsAnchor,
                          &nOccupiedSeatsCount, 0);
 
-    for (i = 0; i < 0;)
+    for (i = 0; i < 0; i++)
+    {
+    }
 }
 
 #endif

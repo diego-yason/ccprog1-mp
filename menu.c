@@ -6,7 +6,7 @@
 void printMenu(int nCurrentTime)
 {
     printf("Welcome, teller!\nCurrent Time:    %04d\n", nCurrentTime);
-    printf("==========================================");
+    printf("==========================================\n");
     printf("1 - Book a Ticket\n");
     printf("2 - Cancel a Ticket\n");
     printf("3 - Display Timetable\n");
@@ -16,13 +16,22 @@ void printMenu(int nCurrentTime)
     printf("Select Option: ");
 }
 
+void clearConsole()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 void repeatPrint(char character, int amount)
 {
     int i;
 
     for (i = 0; i < amount; i++)
     {
-        printf(character);
+        printf("%c", character);
     }
 }
 

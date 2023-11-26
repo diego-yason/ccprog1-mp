@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "menu.c"
+#include "busManagement.c"
 
 int main()
 {
@@ -16,7 +17,7 @@ int main()
     do
     {
         // Menu select
-        printMenu();
+        printMenu(nCurrentTime);
         scanf("%d", &nChoice);
 
         switch (nChoice)
@@ -75,6 +76,7 @@ int main()
         case 5:
         {
             printf("WARNING: All data will be deleted upon confirmation.\n Continue to exit program? (y) ");
+            fflush(stdin);
             scanf("%c", &cBuffer);
 
             if (cBuffer == 'y')
@@ -98,7 +100,7 @@ int main()
 
             if (cBuffer == 'y')
             {
-                int nNewSeatCount, nMinimumCount;
+                int nNewSeatCount, nMinimumCount = 14;
                 // TODO: Obtain highest seat taken
 
                 printf("Minimum seats required: %d\n\n", nMinimumCount);
@@ -134,5 +136,7 @@ int main()
         printf("Press enter to continue.");
         fflush(stdin);
         getchar();
+
+        clearConsole();
     } while (nChoice != 5);
 }
