@@ -140,13 +140,8 @@ int main()
 
         clearConsole();
     } while (nChoice != 5);
-}
-}
 
-printf("Press enter to continue.");
-fflush(stdin);
-getchar();
-}
-while (nChoice != 5)
-    ;
+    printf("Press enter to continue.");
+    fflush(stdin);
+    getchar();
 }

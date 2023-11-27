@@ -33,15 +33,6 @@ void repeatPrint(char character, int amount)
     {
         printf("%c", character);
     }
-}
-
-void clearConsole()
-{
-#ifdef _WIN32
-    system("cls");
-#else
-    system("clear");
-#endif
-}
+} 
 
 #endif
