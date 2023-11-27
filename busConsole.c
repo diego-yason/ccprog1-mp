@@ -40,13 +40,15 @@ void printBookingInfo(int **ppOccupiedSeatsList, int *pSeatsAnchor,
     int nSeatNumber = **ppOccupiedSeatsList;
     printf("%2d - %d", nSeatNumber,
            *iteratePointer(pSeatsAnchor, nSeatNumber - 1));
+
+    // Reduce seat count tracking
     (*pOccupiedSeatsCount)--;
+    // Iterate pointer
     (*ppOccupiedSeatsList)++;
 }
 
 /**
  * Prints bus information, including layout, seats, and trip information
- *
  * @param pSeatsAnchor Pointer to the list of seats
  * @param nSeatCount Total amount of seats inside bus
  * @param nDepartureTime The departure time of the bus
@@ -56,6 +58,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
     int i,
         *pSeatsCursor = pSeatsAnchor,
         *pOccupiedSeatsListAnchor = calloc(nSeatCount, sizeof(int *)),
+        // Cursor1 for booking info list, Cursor2 for Xs on bus layout
         *pOccupiedSeatsListCursor1, *pOccupiedSeatsListCursor2,
         nOccupiedSeatsCount = 0;
 
@@ -63,6 +66,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
 
     char *sOrigin, *sDestination, cTimePrefix;
 
+    // Find occupied seats
     for (i = 1; i <= nSeatCount; i++)
     {
         if (*pSeatsCursor != 0)
@@ -73,8 +77,10 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
         }
         pSeatsCursor++;
     }
+    // Reset cursor
     pOccupiedSeatsListCursor1 = pOccupiedSeatsListAnchor;
 
+    // Determine information for the information board
     if (nDepartureTime % 200 == 0)
     {
         sOrigin = "MANILA";
@@ -124,6 +130,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
     printf("LAYOUT");
     repeatPrint(' ', 9);
 
+    // General pattern: Bus Layout -> Booked Seats -> Bus Layout -> (repeat)
     printf("BOOKED  SEATS\n\n");
 
     printf("/");
@@ -141,6 +148,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
                          &nOccupiedSeatsCount, 0);
     printf("\n");
 
+    // Iterate through seats
     for (i = 1; i <= nSeatCount; i++)
     {
         int bIsOccupied = *pOccupiedSeatsListCursor2 == i;
@@ -158,6 +166,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
         if (i % 2 == 0)
             printf("\n");
     }
+    // Add extra XXXX marker for no seat if bus seats is not even
     if (nSeatCount % 2 == 1)
     {
         printf("|XXXX|");
@@ -180,6 +189,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
         printf("\n");
     }
 
+    // Release memory of calloc'd variable
     free(pOccupiedSeatsListAnchor);
 }
 

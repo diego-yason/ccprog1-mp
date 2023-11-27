@@ -26,9 +26,9 @@ void printMenu(int nCurrentTime)
 void clearConsole()
 {
 #ifdef _WIN32
-    system("cls");
+    system("cls"); // Windows
 #else
-    system("clear");
+    system("clear"); // UNIX-like
 #endif
 }
 
