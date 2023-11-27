@@ -33,6 +33,21 @@ void repeatPrint(char character, int amount)
     {
         printf("%c", character);
     }
-} 
+}
+
+void collectSeatNumber(int *pSeatStore, int nSeats)
+{
+    int bIsInvalid;
+    do
+    {
+        printf("Enter seat number: ");
+        scanf("%d", pSeatStore);
+
+        bIsInvalid = *pSeatStore < 1 || *pSeatStore > nSeats;
+
+        if (bIsInvalid)
+            printf("Please enter a valid seat number, from 1 to %d.\n", nSeats);
+    } while (bIsInvalid);
+}
 
 #endif

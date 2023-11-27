@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "menu.c"
+#include "busConsole.c"
 #include "busManagement.c"
+#include "console.c"
+#include "time.c"
 
 int main()
 {
@@ -24,31 +26,86 @@ int main()
         {
         case 1:
         {
+            int nSeatNumber,
+                nId,
+                *pSeat;
 
+            printBus(pSeatsAnchor, nSeats, nCurrentTime);
+
+            collectSeatNumber(&nSeatNumber, nSeats);
+            pSeat = iteratePointer(pSeatsAnchor, nSeatNumber - 1);
+
+            if (*pSeat == 0)
+            {
+                // TODO: add verifier
+                printf("Enter ID number of the person booking: ");
+                scanf("%d", &nId);
+
+                *pSeat = nId;
+                printf("The booking of ID %d for seat %d is successful.\n", nId, nSeatNumber);
+                nTakenSeats++;
+                nTicketCount++;
+            }
+            else
+                printf("Seat is occupied. Returning to menu.\n");
             break;
         }
         case 2:
         {
+            int nSeatNumber, *pSeat;
+            char cConfirm;
+            printBus(pSeatsAnchor, nSeats, nCurrentTime);
+
+            collectSeatNumber(&nSeatNumber, nSeats);
+            pSeat = iteratePointer(pSeatsAnchor, nSeatNumber - 1);
+
+            if (*pSeat != 0)
+            {
+                printf("Please confirm to cancel seat %d. Currently held by ID %d.\n(y) ", nSeatNumber, *pSeat);
+                fflush(stdin);
+                scanf("%c", &cConfirm);
+
+                if (cConfirm == 'y')
+                {
+                    printf("Cancelled ID %d's reservation for seat %d.\n", *pSeat, nSeatNumber);
+
+                    *pSeat = 0;
+                    nTakenSeats--;
+                    nTicketCount--;
+                }
+                else
+                    printf("Cancelled cancellation. Returning to menu.\n");
+            }
+            else
+                printf("This seat is not occupied. Returning to menu.\n");
             break;
         }
         case 3:
         {
-            printBus(pSeatsAnchor, nSeats, nCurrentTime);
+            printTimetable(nCurrentTime);
             break;
         }
         case 4:
         {
-            int nProposedTime;
+            int nProposedTime, bValidTime;
 
-            printf("Enter new departure time: ");
-            scanf("%d", &nProposedTime);
+            do
+            {
+                printf("Enter the departure time of the next desired bus: ");
+                scanf("%d", &nProposedTime);
+                bValidTime = verifyTime(nProposedTime);
+
+                if (!bValidTime)
+                    printf("Please enter a valid time.\n");
+            } while (!bValidTime);
 
             if (nProposedTime % 100 == 0 &&
-                nProposedTime < nCurrentTime &&
-                nProposedTime > 1900) // NOTE: 1900 is the final bus
+                nProposedTime > nCurrentTime &&
+                nProposedTime < 1900) // NOTE: 1900 is the final bus time
             {
                 printf("WARNING: Existing booking data for current bus will be deleted upon confirmation.\n");
                 printf("Confirm? (y) ");
+                fflush(stdin);
                 scanf("%c", &cBuffer);
 
                 if (cBuffer == 'y')
@@ -70,7 +127,7 @@ int main()
                 }
             }
             else
-                printf("Please check timetable and use any of the scheduled departure times.\n");
+                printf("Please check timetable and use any of the *scheduled* departure times.\n");
 
             break;
         }
@@ -95,25 +152,29 @@ int main()
         }
         case 6:
         {
-
             printf("NOTE: This will update the seat configuration of bus %d.\nContinue? (y) ", nBus);
+            fflush(stdin);
             scanf("%c", &cBuffer);
 
             if (cBuffer == 'y')
             {
-                int nNewSeatCount, nMinimumCount = 14;
-                // TODO: Obtain highest seat taken
+                int i, nNewSeatCount, nMinimumCount = 1;
+                for (i = 0; i < nSeats; i++)
+                {
+                    if (*iteratePointer(pSeatsAnchor, i) != 0)
+                        nMinimumCount = i + 1;
+                }
 
                 printf("Minimum seats required: %d\n\n", nMinimumCount);
 
                 printf("Enter new seat configuration: ");
                 scanf("%d", &nNewSeatCount);
 
-                if (nMinimumCount < nNewSeatCount)
+                if (nMinimumCount <= nNewSeatCount)
                 {
                     printf("Updated seat count from %d to %d.\n", nSeats, nNewSeatCount);
 
-                    pSeatsAnchor = transferSeatData(pSeatsAnchor, nSeats, nNewSeatCount);
+                    transferSeatData(&pSeatsAnchor, nMinimumCount, nNewSeatCount);
                     nSeats = nNewSeatCount;
                 }
                 else
@@ -140,8 +201,4 @@ int main()
 
         clearConsole();
     } while (nChoice != 5);
-
-    printf("Press enter to continue.");
-    fflush(stdin);
-    getchar();
 }

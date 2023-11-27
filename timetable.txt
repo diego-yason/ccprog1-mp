@@ -1,0 +1,23 @@
+|================================|
+|  T R I P S  T I M E T A B L E  |
+| CURRENT TIME:             0400 |
+|                        04:00am |
+|================================|
+| M A N I L A  T O               |
+| L A G U N A                    |
+| DEPT. TIME              STATUS | 
+| 0400 / 04:00am        DEPARTED |
+| 0600 / 06:00am        DEPARTED |
+| 0800 / 08:00am        BOARDING |
+| 1000 / 10:00am       SCHEDULED |
+| 1200 / 12:00pm       SCHEDULED |
+|================================|
+| M A N I L A  T O               |
+| L A G U N A                    |
+| DEPT. TIME              STATUS | 
+| 0500 / 05:00am        DEPARTED |
+| 0700 / 07:00am        DEPARTED |
+| 0900 / 09:00am       SCHEDULED |
+| 1100 / 11:00am       SCHEDULED |
+| 1300 / 01:00pm       SCHEDULED |
+|================================|

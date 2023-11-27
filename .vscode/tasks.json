@@ -2,7 +2,7 @@
   "tasks": [
     {
       "type": "cppbuild",
-      "label": "C/C++: gcc.exe build active file",
+      "label": "build active",
       "command": "C:/MinGW/bin/gcc.exe",
       "args": [
         "-fdiagnostics-color=always",
@@ -21,7 +21,7 @@
     },
     {
       "type": "cppbuild",
-      "label": "C/C++: gcc.exe build main file",
+      "label": "build main",
       "command": "C:\\MinGW\\bin\\gcc.exe",
       "args": [
         "-fdiagnostics-color=always",
