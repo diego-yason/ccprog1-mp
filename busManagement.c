@@ -34,7 +34,7 @@ void printSeatInfo(int nSeatNumber, int nIdInSeat)
 }
 
 /**
- * @brief
+ * Prints booking information for a certain seat
  *
  * @param pOccupiedSeatsList Pointer to the Occupied Seats List
  * @param pSeatsAnchor Pointer to the Seat Anchor
@@ -56,13 +56,22 @@ void printBookingInfo(int *pOccupiedSeatsList, int *pSeatsAnchor,
     pOccupiedSeatsList++;
 }
 
-void printBus(int *pSeatsAnchor, int nSeatCount)
+/**
+ * Prints bus information, including layout, seats, and trip information
+ *
+ * @param pSeatsAnchor Pointer to the list of seats
+ * @param nSeatCount Total amount of seats inside bus
+ * @param nDepartureTime The departure time of the bus
+ */
+void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
 {
     int i,
         *pSeatsCursor = pSeatsAnchor,
         *pOccupiedSeatsListAnchor = calloc(nSeatCount, sizeof(int *)),
         *pOccupiedSeatsListCursor = pOccupiedSeatsListAnchor,
         nOccupiedSeatsCount = 0;
+
+    char *sOrigin, *sDestination, cTimePrefix;
 
     for (i = 0; i < nSeatCount; i++)
     {
@@ -75,24 +84,46 @@ void printBus(int *pSeatsAnchor, int nSeatCount)
     }
     pOccupiedSeatsListCursor = pOccupiedSeatsListAnchor;
 
+    if (nDepartureTime % 200 == 0)
+    {
+        sOrigin = "MANILA";
+        sDestination = "LAGUNA";
+    }
+    else
+    {
+        sOrigin = "LAGUNA";
+        sDestination = "MANILA";
+    }
+
+    if (nDepartureTime >= 1200)
+        cTimePrefix = 'p';
+    else
+        cTimePrefix = 'a';
+
     repeatPrint(' ', 13);
     printf("INFORMATION\n");
 
     printf(" Bus Route");
     repeatPrint(' ', 8);
-    printf(": %6s - %6s\n");
+    printf(": %6s - %6s\n", sOrigin, sDestination);
 
     printf(" Seats Available");
     repeatPrint(' ', 2);
-    printf(": %d\n");
+    printf(": %d\n", nSeatCount - nOccupiedSeatsCount);
 
     printf(" Departure Time");
     repeatPrint(' ', 3);
-    printf(": %04d / %02d:%02d %cm\n");
+    printf(": %04d / %02d:%02d %cm\n", nDepartureTime,
+           nDepartureTime % 100, nDepartureTime / 100, cTimePrefix);
+
+    // Special case
+    if (nDepartureTime == 1100)
+        cTimePrefix = 'p';
 
     printf(" Arrival Time");
     repeatPrint(' ', 5);
-    printf(": %04d / %02d:%02d %cm\n");
+    printf(": %04d / %02d:%02d %cm\n", nDepartureTime + 100,
+           (nDepartureTime + 100) % 100, (nDepartureTime + 100) / 100, cTimePrefix);
 
     repeatPrint('=', 36);
     printf("\n");
@@ -109,6 +140,7 @@ void printBus(int *pSeatsAnchor, int nSeatCount)
     if (nOccupiedSeatsCount > 0)
         printBookingInfo(pOccupiedSeatsListCursor, pSeatsAnchor,
                          &nOccupiedSeatsCount, 0);
+    printf("\n");
 
     printf("| DR |");
     repeatPrint(' ', 6);
@@ -116,10 +148,27 @@ void printBus(int *pSeatsAnchor, int nSeatCount)
     if (nOccupiedSeatsCount > 0)
         printBookingInfo(pOccupiedSeatsListCursor, pSeatsAnchor,
                          &nOccupiedSeatsCount, 0);
+    printf("\n");
 
-    for (i = 0; i < 0; i++)
+    for (i = 0; i < nSeatCount; i++)
     {
+        int bIsOccupied = *pOccupiedSeatsListCursor == i;
+        printSeatInfo(i + 1, bIsOccupied);
+
+        if (bIsOccupied)
+            pOccupiedSeatsListCursor++;
+
+        if (i % 2 == 1)
+            printf(" ");
+        else if (nOccupiedSeatsCount > 0)
+            printBookingInfo(pOccupiedSeatsListCursor, pSeatsAnchor,
+                             &nOccupiedSeatsCount, 0);
+
+        if (i % 2 == 0)
+            printf("\n");
     }
+
+    free(pOccupiedSeatsListAnchor);
 }
 
 #endif

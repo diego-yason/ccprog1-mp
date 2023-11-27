@@ -35,4 +35,13 @@ void repeatPrint(char character, int amount)
     }
 }
 
+void clearConsole()
+{
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
 #endif
