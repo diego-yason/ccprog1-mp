@@ -6,6 +6,13 @@
 #ifndef BUS_CONSOLE_C
 #define BUS_CONSOLE_C
 
+/**
+ * Prints seat inside bus layout, indicates if seat is occupied.
+ * Precondition: Formatting is only set for 2 digit numbers (nSeatNumber), but
+ * code will still work on 3+ digits, however formatting/style will break.
+ * @param nSeatNumber Number of the specific seat
+ * @param nIdInSeat If occupied, ID number of occupant. Otherwise 0.
+ */
 void printSeatInfo(int nSeatNumber, int nIdInSeat)
 {
     if (nIdInSeat == 0)
@@ -176,6 +183,9 @@ void printBus(int *pSeatsAnchor, int nSeatCount, int nDepartureTime)
     free(pOccupiedSeatsListAnchor);
 }
 
+/**
+ * Prints a divider for the timetable
+ */
 void printTimetableDivider()
 {
     printf("|");
@@ -183,6 +193,13 @@ void printTimetableDivider()
     printf("|\n");
 }
 
+/**
+ * Determines the status of the bus based on the current time
+ * and the bus's departure time.
+ * @param nCurrentTime Currently set time
+ * @param nDepartureTime Departure time of the bus
+ * @return char* Status of the bus. String.
+ */
 char *getBusStatus(int nCurrentTime, int nDepartureTime)
 {
     if (nCurrentTime == nDepartureTime)
@@ -195,6 +212,12 @@ char *getBusStatus(int nCurrentTime, int nDepartureTime)
         return "SCHEDULED";
 }
 
+/**
+ * Prints timetable of the bus, including the status based off the time.
+ * Precondition: Assumes the currently set schedule of a bus leaving every
+ * 2 hours from each campus, from 4am in Manila and from 5am in Laguna.
+ * @param nCurrentTime Currently set time
+ */
 void printTimetable(int nCurrentTime)
 {
     int nBusTime, nHour;
